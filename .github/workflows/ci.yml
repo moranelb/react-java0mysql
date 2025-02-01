@@ -29,10 +29,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and start services
-        env:
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
         run: |
           docker-compose build
           docker-compose up -d
@@ -40,7 +36,7 @@ jobs:
       - name: Wait for MySQL
         run: |
           timeout=60
-          while ! docker-compose exec -T db mysqladmin ping -h localhost -u root --password=${MYSQL_ROOT_PASSWORD} --silent; do
+          while ! docker-compose exec -T db mysqladmin ping -h localhost -u root -p --silent; do
             sleep 1
             timeout=$((timeout - 1))
             if [ $timeout -eq 0 ]; then
