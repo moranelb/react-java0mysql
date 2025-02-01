@@ -2,11 +2,9 @@ name: CI Pipeline
 
 on:
   push:
-    branches:
-      - dev
+    branches: [dev]
   pull_request:
-    branches:
-      - dev
+    branches: [dev]
 
 jobs:
   build-test-push:
@@ -31,6 +29,22 @@ jobs:
         run: |
           docker-compose build
           docker-compose up -d
+
+      - name: Wait for MySQL
+        run: |
+          timeout=300
+          while ! docker-compose exec -T db mysql -uroot -p${MYSQL_ROOT_PASSWORD} -e "SELECT 1;" >/dev/null 2>&1; do
+            timeout=$((timeout - 1))
+            if [ $timeout -eq 0 ]; then
+              echo "Timed out waiting for MySQL to be ready"
+              exit 1
+            fi
+            echo "Waiting for MySQL to be ready..."
+            sleep 1
+          done
+
+      - name: Check MySQL logs
+        run: docker-compose logs db
 
       - name: Run tests
         run: |
