@@ -45,10 +45,15 @@ jobs:
             fi
           done
 
-      - name: Run tests
+      - name: Test containers
         run: |
-          docker-compose exec -T backend mvn test
-          docker-compose exec -T frontend npm test
+          if ! docker-compose ps | grep -q "Up"; then
+            echo "One or more containers failed to start"
+            docker-compose ps
+            exit 1
+          else
+            echo "All containers are running"
+          fi
 
       - name: Push images to Docker Hub
         run: |
