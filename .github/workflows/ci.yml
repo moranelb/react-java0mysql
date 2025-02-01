@@ -29,13 +29,13 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and start services
+        env:
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
         run: |
           docker-compose build
           docker-compose up -d
-        env:
-          MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-          MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-          SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
 
       - name: Wait for MySQL
         run: |
