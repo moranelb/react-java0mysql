@@ -1,6 +1,7 @@
 services:
+  # Database Service
   db:
-    image: mysql:8.0.34
+    image: mysql:8.0.27
     container_name: mysql-db
     restart: always
     environment:
@@ -15,12 +16,13 @@ services:
     networks:
       - backend
     healthcheck:
-      test: ["CMD", "mysql", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}", "-e", "USE example;"]
+      test: ["CMD", "mysql", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}", "-e", "SELECT 1;"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
       start_period: 60s
 
+  # Backend Service (Java Spring Boot)
   backend:
     build:
       context: ./backend
@@ -41,6 +43,7 @@ services:
       - backend
       - frontend
 
+  # Frontend Service (React)
   frontend:
     build:
       context: ./frontend
