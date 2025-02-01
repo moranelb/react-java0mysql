@@ -32,15 +32,11 @@ jobs:
         run: |
           docker-compose build
           docker-compose up -d
-        env:
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
 
       - name: Wait for MySQL
         run: |
           timeout=60
-          while ! docker-compose exec -T db mysqladmin ping -h 127.0.0.1 -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" --silent; do
+          while ! docker-compose exec -T db mysqladmin ping -h 127.0.0.1 -u root -p"db-57xsl" --silent; do
             sleep 1
             timeout=$((timeout - 1))
             if [ $timeout -eq 0 ]; then
