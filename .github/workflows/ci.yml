@@ -33,18 +33,6 @@ jobs:
           docker-compose build
           docker-compose up -d
 
-      - name: Wait for MySQL
-        run: |
-          timeout=60
-          while ! docker-compose exec -T db mysqladmin ping -h 127.0.0.1 -u root -p"db-57xsl" --silent; do
-            sleep 1
-            timeout=$((timeout - 1))
-            if [ $timeout -eq 0 ]; then
-              echo "MySQL did not become ready in time"
-              exit 1
-            fi
-          done
-
       - name: Test containers
         run: |
           if ! docker-compose ps | grep -q "Up"; then
